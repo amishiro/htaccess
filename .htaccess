@@ -2,26 +2,30 @@ AddType application/x-httpd-php .php .html
 
 RewriteEngine on
 
-# === index.html/phpなしに統一 ================================
+# === RewriteRuleセット ================================
+
+RewriteBase /xxxx/ #ドキュメントルートを設定する
+
+### index.html/phpなしに統一 ###
 
 RewriteCond %{THE_REQUEST} ^.*/index.html
-#RewriteCond %{REQUEST_URI} !(^/xxx/xxx/) #指定のディレクトリを対象外にする
-RewriteRule ^(.*)index.html$ /xxx/$1 [R=301,L]
+RewriteCond %{REQUEST_URI} !(zzzz/) #指定のディレクトリを対象外にする
+RewriteRule ^(.*)index.html$ $1 [R=301,L]
 
 RewriteCond %{THE_REQUEST} ^.*/index.php
-#RewriteCond %{REQUEST_URI} !(^/xxx/xxx/) #指定のディレクトリを対象外にする
-RewriteRule ^(.*)index.php$ /xxx/$1 [R=301,L]
+RewriteCond %{REQUEST_URI} !(zzzz/) #指定のディレクトリを対象外にする
+RewriteRule ^(.*)index.php$ $1 [R=301,L]
 
-# === httpsに統一 ================================
+### httpsに統一 ###
 
 RewriteCond %{SERVER_PORT} 80
-#RewriteCond %{REQUEST_URI} !(^/xxx/xxx/) #指定のディレクトリを対象外にする
+RewriteCond %{REQUEST_URI} !(zzzz/) #指定のディレクトリを対象外にする
 RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
 
 # === 404リダイレクト ================================
 
-#ErrorDocument 404 /xxx/http404/
-#ErrorDocument 403 /xxx/http404/
+ErrorDocument 404 /xxxx/http404/ #リダイレクト先はフルパスで記述
+ErrorDocument 403 /xxxx/http404/ #リダイレクト先はフルパスで記述
 
 # === 各種リダイレクト ================================
 
