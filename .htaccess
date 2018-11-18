@@ -1,29 +1,46 @@
 AddType application/x-httpd-php .php .html
 
-RewriteEngine on
-
 # === RewriteRuleセット ================================
+<IfModule mod_rewrite.c>
 
-#↓ドキュメントルートを設定する
-RewriteBase /xxx/
+# --- RewriteEngineをOn、ドキュメントルートを設定する ---
+
+RewriteEngine on
+RewriteBase /
+
+# --- 404リダイレクト ---
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^.*$ 200.html
 
 # --- index.html/phpなしに統一 ---
 
 RewriteCond %{THE_REQUEST} ^.*/index.html
-#↓指定のディレクトリを対象外にする。ポイントは、RewriteCondとRewriteRuleの間に毎回書くこと。
-#RewriteCond %{REQUEST_URI} !(zzz/)
+#　↓指定のディレクトリを対象外にする
+# RewriteCond %{REQUEST_URI} !(xxx/)
 RewriteRule ^(.*)index.html$ $1 [R=301,L]
 
 RewriteCond %{THE_REQUEST} ^.*/index.php
-#↓指定のディレクトリを対象外にする。ポイントは、RewriteCondとRewriteRuleの間に毎回書くこと。
-#RewriteCond %{REQUEST_URI} !(zzz/)
+#　↓指定のディレクトリを対象外にする
+# RewriteCond %{REQUEST_URI} !(xx/)
 RewriteRule ^(.*)index.php$ $1 [R=301,L]
+
+# --- wwwあり・なしに統一 ---
+
+# あり
+# RewriteCond %{HTTP_HOST} ^example\.com$
+# RewriteRule ^(.*)$ https://www.example.com/$1 [R=301,L]
+
+# なし
+RewriteCond %{HTTP_HOST} ^www\.example\.com$
+RewriteRule ^(.*)$ https://example.com/$1 [R=301,L]
 
 # --- httpsに統一 ---
 
 RewriteCond %{SERVER_PORT} 80
-#↓指定のディレクトリを対象外にする。ポイントは、RewriteCondとRewriteRuleの間に毎回書くこと。
-#RewriteCond %{REQUEST_URI} !(zzz/)
+#　↓指定のディレクトリを対象外にする
+# RewriteCond %{REQUEST_URI} !(xxx/)
 RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
 
 # --- ディレクトリダイレクト ---
@@ -34,11 +51,8 @@ RewriteRule ^oldDir/(.*)$ newDir/$1 [R=301,L]
 
 RewriteRule ^oldDir/index.html newDir/new.html [R=301,L]
 
-# --- 404リダイレクト ---
-#↓404リダイレクト関連はドキュメントルートで記述
+</IfModule>
 
-ErrorDocument 404 /xxx/http404/
-ErrorDocument 403 /xxx/http404/
 
 # === キャッシュコントロール ================================
 #Thanks：https://html5boilerplate.com/
